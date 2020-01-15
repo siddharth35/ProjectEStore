@@ -19,7 +19,7 @@ public class UserService {
 	public User getUserByUsername(String uname) {
 		User user = repo.findByUsername(uname);
 		if(user==null) {
-			throw new UserNotFoundException("Cannot find: "+uname);
+			throw new UserNotFoundException("Cannot find username:"+uname);
 		}
 		return user;
 	}
@@ -36,27 +36,36 @@ public class UserService {
 		return allUsers;
 	}
 	
-	public void deleteUserById(Long uid) {
-		repo.deleteById(uid);
+	public void deleteUserByUsername(String uname) {
+		User usr = repo.findByUsername(uname);
+		if(usr==null) {
+			throw new UserNotFoundException("Username:"+uname);
+		}
+		repo.deleteById(usr.getId());
 	}
 	
 	public User updateUser(User user) {
 		User usr = repo.findByUsername(user.getUsername());
 		if(usr==null) {
-			throw new UserNotFoundException("Unable to update: "+user.getUsername());
+			throw new UserNotFoundException("Unable to update:"+user.getUsername());
 		}
 		usr = repo.getOne(usr.getId());
 		usr.setPassword(user.getPassword());
 		usr.setCountry(user.getCountry());
 		usr.setIsAdmin(user.getIsAdmin());
-		return user;
+		return repo.save(usr);
 	}
 	
 	public boolean addToFavourite(String uname, Product product) {
-		User user = getUserByUsername(uname);
-		boolean added = user.getFavourites().add(product);
+		User usr = getUserByUsername(uname);
+		boolean added = usr.getFavourites().add(product);
 		return added;
 	}
 	
+	public List<Product> getFavourites(String uname) {
+		User usr = getUserByUsername(uname);
+		List<Product> favs = usr.getFavourites();
+		return favs;
+	}
 	
 }
