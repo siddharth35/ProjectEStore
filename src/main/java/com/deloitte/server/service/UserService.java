@@ -36,12 +36,13 @@ public class UserService {
 		return allUsers;
 	}
 	
-	public void deleteUserByUsername(String uname) {
+	public boolean deleteUserByUsername(String uname) {
 		User usr = repo.findByUsername(uname);
 		if(usr==null) {
 			throw new UserNotFoundException("Username:"+uname);
 		}
 		repo.deleteById(usr.getId());
+		return repo.findByUsername(uname)==null;
 	}
 	
 	public User updateUser(User user) {

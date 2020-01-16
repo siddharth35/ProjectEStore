@@ -56,9 +56,14 @@ public class UserController {
 	}
 	
 	@GetMapping("/user/delete/{username}")
-	public ResponseEntity<User> deleteUser(@PathVariable("username") String uname) {
-		service.deleteUserByUsername(uname);
-		ResponseEntity<User> reu = new ResponseEntity<User>(HttpStatus.OK);
+	public ResponseEntity<Boolean> deleteUser(@PathVariable("username") String uname) {
+		Boolean exec = service.deleteUserByUsername(uname);
+		ResponseEntity<Boolean> reu;
+		if(exec) {
+			reu = new ResponseEntity<Boolean>(exec, HttpStatus.OK);
+		} else {
+			reu = new ResponseEntity<Boolean>(exec, HttpStatus.NOT_MODIFIED);
+		}
 		return reu;
 	}
 
